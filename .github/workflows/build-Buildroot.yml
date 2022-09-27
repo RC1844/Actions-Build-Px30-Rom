@@ -19,24 +19,28 @@ jobs:
           sudo -E apt-get clean
           sudo -E apt-get -qq update
           sudo -E apt-get install -qq aptitude
-          sudo -E aptitude install -y build-essential crossbuild-essential-arm64 bash-completion vim locales time rsync bc python
-          sudo -E aptitude install -y repo git ssh libssl-dev liblz4-tool lib32stdc++6 expect patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake unzip device-tree-compiler python-pip ncurses-dev python-pyelftools subversion asciidoc w3m dblatex graphviz python-matplotlib cpio libparse-yapp-perl default-jre patchutils swig expect-dev u-boot-tools
+          sudo -E aptitude install -y build-essential crossbuild-essential-arm64 bash-completion vim locales time rsync bc python3
+          sudo -E aptitude install -y repo git ssh libssl-dev liblz4-tool lib32stdc++6 expect patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake unzip device-tree-compiler python3-pip ncurses-dev python3-pyelftools subversion asciidoc w3m dblatex graphviz python3-matplotlib cpio libparse-yapp-perl default-jre patchutils swig expect-dev u-boot-tools
           git config --global user.name RC1844
           git config --global user.email "1844766234@qq.com"
 
-      # - name: Setup Debug Session
-      #   uses: csexton/debugger-action@master
+      - name: Start SSH via tmate
+        uses: P3TERX/ssh2actions@main
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Sync source
         run: |
           mkdir ${{env.WorkSpace}}
           cd ${{env.WorkSpace}}
           echo "::group::Repo Init"
-          repo init -p --no-clone-bundle --depth=1 --repo-url https://gitlab.com/firefly-linux/git-repo.git -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
+          export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'
+          python3 /usr/bin/repo init -p --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
           echo "::endgroup::"
           echo "::group::Repo Sync"
-          repo sync -c --no-tags
-          repo start firefly --all
+          python3 /usr/bin/repo sync -c --no-tags
+          python3 /usr/bin/repo start firefly --all
           echo "::endgroup::"
 
       - name: Build Buildroot
