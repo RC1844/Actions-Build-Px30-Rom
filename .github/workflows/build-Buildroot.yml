@@ -1,0 +1,60 @@
+name: Buildroot Builder
+
+on:
+  workflow_dispatch:
+
+env:
+  WorkSpace: WorkSpace
+
+jobs:
+  build-Buildroot:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: "Cleanup Environment"
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: Initializing environment
+        run: |
+          sudo -E apt-get clean
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq build-essential crossbuild-essential-arm64 \
+	bash-completion vim locales time rsync bc python
+          sudo -E apt-get -qq repo git ssh libssl-dev liblz4-tool lib32stdc++6 \
+	        expect patchelf chrpath gawk texinfo diffstat binfmt-support \
+	        qemu-user-static live-build bison flex fakeroot cmake \
+	        unzip device-tree-compiler python-pip ncurses-dev python-pyelftools \
+	        subversion asciidoc w3m dblatex graphviz python-matplotlib cpio \
+	        libparse-yapp-perl default-jre patchutils swig expect-dev u-boot-tools
+
+      - name: Sync source
+        run: |
+          mkdir ${{env.WorkSpace}}
+          cd ${{env.WorkSpace}}
+          echo "::group::Repo Init"
+          repo init --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
+          echo "::endgroup::"
+          echo "::group::Repo Sync"
+          repo sync -c --no-tags
+          repo start firefly --all
+          echo "::endgroup::"
+
+      - name: Build Buildroot
+        run: |
+          cd ${{env.WorkSpace}}
+          echo "::group::Run build.sh"
+          ./build.sh px30-lvds-buildroot.mk
+          ./build.sh
+          echo "::endgroup::"
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@master
+        with:
+          prerelease: true
+          files: |
+            ${{env.WorkSpace}}/rockdev/*
+          name: Buildroot_${{github.run_id}}
+          body: |
+          Buildroot
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
