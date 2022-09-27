@@ -19,8 +19,8 @@ jobs:
           sudo -E apt-get clean
           sudo -E apt-get -qq update
           sudo -E apt-get install -qq aptitude
-          sudo -E aptitude install -y build-essential crossbuild-essential-arm64 bash-completion vim locales time rsync bc python
-          sudo -E aptitude install -y repo git ssh libssl-dev liblz4-tool lib32stdc++6 expect patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake unzip device-tree-compiler python-pip ncurses-dev python-pyelftools subversion asciidoc w3m dblatex graphviz python-matplotlib cpio libparse-yapp-perl default-jre patchutils swig expect-dev u-boot-tools
+          sudo -E aptitude install -y build-essential crossbuild-essential-arm64 bash-completion vim locales time rsync bc python3
+          sudo -E aptitude install -y repo git ssh libssl-dev liblz4-tool lib32stdc++6 expect patchelf chrpath gawk texinfo diffstat binfmt-support qemu-user-static live-build bison flex fakeroot cmake unzip device-tree-compiler python3-pip ncurses-dev python3-pyelftools subversion asciidoc w3m dblatex graphviz python3-matplotlib cpio libparse-yapp-perl default-jre patchutils swig expect-dev u-boot-tools
 
       - name: Sync source
         run: |
