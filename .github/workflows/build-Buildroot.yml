@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - name: "Cleanup Environment"
-        uses: rokibhasansagar/slimhub_actions@main
+      # - name: "Cleanup Environment"
+      #   uses: rokibhasansagar/slimhub_actions@main
 
       - name: Initializing environment
         run: |
@@ -27,11 +27,11 @@ jobs:
           mkdir ${{env.WorkSpace}}
           cd ${{env.WorkSpace}}
           echo "::group::Repo Init"
-          repo init --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
+          python3 ~/bin/repo init --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
           echo "::endgroup::"
           echo "::group::Repo Sync"
-          repo sync -c --no-tags
-          repo start firefly --all
+          python3 ~/bin/repo sync -c --no-tags
+          python3 ~/bin/repo start firefly --all
           echo "::endgroup::"
 
       - name: Build Buildroot
