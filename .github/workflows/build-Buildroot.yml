@@ -48,7 +48,6 @@ jobs:
           files: |
             ${{env.WorkSpace}}/rockdev/*
           name: Buildroot_${{github.run_id}}
-          body: |
-          Buildroot
+          body: Buildroot
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
