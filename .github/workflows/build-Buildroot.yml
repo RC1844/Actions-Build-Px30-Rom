@@ -26,6 +26,9 @@ jobs:
         run: |
           mkdir ${{env.WorkSpace}}
           cd ${{env.WorkSpace}}
+          where python
+          where python3
+          where repo
           echo "::group::Repo Init"
           python3 repo init --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
           echo "::endgroup::"
