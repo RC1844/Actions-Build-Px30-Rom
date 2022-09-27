@@ -39,7 +39,7 @@ jobs:
           mkdir ${{env.WorkSpace}}
           cd ${{env.WorkSpace}}
           echo "::group::Repo Init"
-          python3 ~/bin/repo init -p --no-clone-bundle --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
+          python3 ~/bin/repo init --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
           echo "::endgroup::"
           echo "::group::Repo Sync"
           python3 ~/bin/repo sync -c --no-tags
