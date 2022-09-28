@@ -41,6 +41,21 @@ jobs:
           ./build.sh px30-lvds-buildroot.mk
           echo "::endgroup::"
 
+      - name: Build u-boot
+        run: |
+          cd ${{env.WorkSpace}}
+          ./build.sh Uboot
+
+      - name: Build Kernel
+        run: |
+          cd ${{env.WorkSpace}}
+          ./build.sh kernel
+
+      - name: Build Recovery
+        run: |
+          cd ${{env.WorkSpace}}
+          ./build.sh recovery
+
       - name: Start SSH via tmate
         uses: P3TERX/ssh2actions@main
         env:
@@ -50,9 +65,17 @@ jobs:
       - name: Build Buildroot
         run: |
           cd ${{env.WorkSpace}}
-          echo "::group::Run build.sh"
-          ./build.sh
-          echo "::endgroup::"
+          ./build.sh buildroot
+
+      - name: Make Firmware
+        run: |
+          cd ${{env.WorkSpace}}
+          ./mkfirmware.sh
+
+      - name: Make Pack
+        run: |
+          cd ${{env.WorkSpace}}
+          ./build.sh updateimg
 
       - name: Upload Release
         uses: softprops/action-gh-release@master
