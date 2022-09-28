@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  WorkSpace: WorkSpace
+  WorkSpace: ~/Px30_Linux
 
 jobs:
   build-Buildroot:
@@ -28,12 +28,6 @@ jobs:
           git config --global user.name RC1844
           git config --global user.email "1844766234@qq.com"
 
-      # - name: Start SSH via tmate
-      #   uses: P3TERX/ssh2actions@main
-      #   env:
-      #     TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      #     TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
       - name: Sync source
         run: |
           mkdir ${{env.WorkSpace}}
@@ -44,13 +38,19 @@ jobs:
           echo "::group::Repo Sync"
           python3 ~/bin/repo sync -c --no-tags
           python3 ~/bin/repo start firefly --all
+          ./build.sh px30-lvds-buildroot.mk
           echo "::endgroup::"
+
+      - name: Start SSH via tmate
+        uses: P3TERX/ssh2actions@main
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Build Buildroot
         run: |
           cd ${{env.WorkSpace}}
           echo "::group::Run build.sh"
-          ./build.sh px30-lvds-buildroot.mk
           ./build.sh
           echo "::endgroup::"
 
