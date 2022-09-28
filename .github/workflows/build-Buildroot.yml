@@ -55,10 +55,10 @@ jobs:
           cd ${{env.WorkSpace}}
           ./build.sh kernel
 
-      # - name: Build Recovery
-      #   run: |
-      #     cd ${{env.WorkSpace}}
-      #     ./build.sh recovery
+      - name: Build Recovery
+        run: |
+          cd ${{env.WorkSpace}}
+          ./build.sh recovery
 
       - name: Build Buildroot
         run: |
@@ -92,5 +92,6 @@ jobs:
             ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/.config
           name: Buildroot_${{github.run_id}}
           body: Buildroot
+          tag_name: Buildroot_${{github.run_id}}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
