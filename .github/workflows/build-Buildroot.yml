@@ -41,10 +41,10 @@ jobs:
           ./build.sh px30-lvds-buildroot.mk
           echo "::endgroup::"
 
-      - name: Build u-boot
+      - name: Build Uboot
         run: |
           cd ${{env.WorkSpace}}
-          ./build.sh Uboot
+          ./build.sh uboot
 
       - name: Build Kernel
         run: |
