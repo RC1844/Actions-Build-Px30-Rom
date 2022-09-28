@@ -8,7 +8,7 @@ env:
 
 jobs:
   build-Buildroot:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Cleanup Environment"
@@ -38,9 +38,9 @@ jobs:
           echo "::group::Repo Sync"
           python3 ~/bin/repo sync -c --no-tags
           python3 ~/bin/repo start firefly --all
+          echo "::endgroup::"
           ./build.sh px30-lvds-buildroot.mk
           echo "CONFIG_STAT=y" >> ./buildroot/board/rockchip/common/base/busybox.config
-          echo "::endgroup::"
 
       - name: Build Uboot
         run: |
@@ -57,16 +57,17 @@ jobs:
       #     cd ${{env.WorkSpace}}
       #     ./build.sh recovery
 
-      - name: Start SSH via tmate
-        uses: P3TERX/ssh2actions@main
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
       - name: Build Buildroot
         run: |
           cd ${{env.WorkSpace}}
           ./build.sh buildroot
+
+      - name: Start SSH via tmate
+        uses: P3TERX/ssh2actions@main
+        if: ${{ failure() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Make Firmware
         run: |
@@ -80,6 +81,7 @@ jobs:
 
       - name: Upload Release
         uses: softprops/action-gh-release@master
+        if: ${{ always() }}
         with:
           prerelease: true
           files: |
