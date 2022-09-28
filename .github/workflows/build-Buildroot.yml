@@ -39,6 +39,7 @@ jobs:
           python3 ~/bin/repo sync -c --no-tags
           python3 ~/bin/repo start firefly --all
           ./build.sh px30-lvds-buildroot.mk
+          echo "CONFIG_STAT=y" >> ./buildroot/board/rockchip/common/base/busybox.config
           echo "::endgroup::"
 
       - name: Build Uboot
@@ -83,6 +84,7 @@ jobs:
           prerelease: true
           files: |
             ${{env.WorkSpace}}/rockdev/*
+            ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/.config
           name: Buildroot_${{github.run_id}}
           body: Buildroot
         env:
