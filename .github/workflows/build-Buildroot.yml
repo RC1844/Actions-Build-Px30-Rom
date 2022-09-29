@@ -108,8 +108,8 @@ jobs:
         with:
           name: Buildroot_Firmwares_${{github.run_id}}
           path: |
-          ${{env.WorkSpace}}/rockdev/*
-          !${{env.WorkSpace}}/rockdev/pack/*
+            ${{env.WorkSpace}}/rockdev/*
+            !${{env.WorkSpace}}/rockdev/pack/*
 
       - name: Upload Firmware
         uses: actions/upload-artifact@main
@@ -124,8 +124,8 @@ jobs:
         with:
           name: Buildroot_Tools_${{github.run_id}}
           path: |
-          ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/
-          !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/build/
+            ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/
+            !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/build/
 
       - name: Upload Release
         uses: softprops/action-gh-release@master
