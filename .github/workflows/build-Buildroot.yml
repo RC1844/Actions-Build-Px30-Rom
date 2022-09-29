@@ -34,6 +34,7 @@ jobs:
       - name: Sync source
         run: |
           mkdir ${{env.WorkSpace}}
+          ln -s ${{env.WorkSpace}} ${{github.workspace}}/Px30_Linux
           cd ${{env.WorkSpace}}
           echo "::group::Repo Init"
           python3 ~/bin/repo init --depth=1 -u https://gitlab.com/firefly-linux/manifests.git -b master -m px30_linux_release.xml
@@ -88,9 +89,6 @@ jobs:
           echo "::group::Out Directory Space"
           du -sh
           echo "::endgroup::"
-          echo "::group::Ccache Directory Space"
-          du -sh ~/.ccache
-          echo "::endgroup::"
           echo "::group::Disk Space"
           df -hlT /
           echo "::endgroup::"
@@ -98,12 +96,36 @@ jobs:
           tree -C -L 5
           echo "::endgroup::"
 
-      - name: Upload firmware directory
+      - name: Start SSH via tmate
+        uses: P3TERX/ssh2actions@main
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: Upload Firmware directory
         uses: actions/upload-artifact@main
         if: ${{ always() }}
         with:
-          name: Buildroot_${{github.run_id}}
-          path: ${{env.WorkSpace}}/rockdev/*
+          name: Buildroot_Firmwares_${{github.run_id}}
+          path: |
+          ${{env.WorkSpace}}/rockdev/*
+          !${{env.WorkSpace}}/rockdev/pack/*
+
+      - name: Upload Firmware
+        uses: actions/upload-artifact@main
+        if: ${{ always() }}
+        with:
+          name: Buildroot_Firmware_${{github.run_id}}
+          path: ${{env.WorkSpace}}/rockdev/pack/*
+
+      - name: Upload Host Tools
+        uses: actions/upload-artifact@main
+        if: ${{ always() }}
+        with:
+          name: Buildroot_Tools_${{github.run_id}}
+          path: |
+          ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/
+          !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/build/
 
       - name: Upload Release
         uses: softprops/action-gh-release@master
@@ -111,10 +133,10 @@ jobs:
         with:
           prerelease: true
           files: |
-            ${{env.WorkSpace}}/rockdev/*.img
-            ${{env.WorkSpace}}/rockdev/*.txt
-            ${{env.WorkSpace}}/rockdev/*.bin
-            ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/.config
+            ${{github.workspace}}/Px30_Linux/rockdev/*.img
+            ${{github.workspace}}/Px30_Linux/rockdev/*.txt
+            ${{github.workspace}}/Px30_Linux/rockdev/*.bin
+            ${{github.workspace}}/Px30_Linux/buildroot/output/rockchip_px30_64/.config
           name: Buildroot_${{github.run_id}}
           body: Buildroot
           tag_name: Buildroot_${{github.run_id}}
