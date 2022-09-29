@@ -82,13 +82,38 @@ jobs:
           cd ${{env.WorkSpace}}
           ./build.sh updateimg
 
+      - name: Show Space Info
+        run: |
+          cd ${{env.WorkSpace}}
+          echo "::group::Out Directory Space"
+          du -sh
+          echo "::endgroup::"
+          echo "::group::Ccache Directory Space"
+          du -sh ~/.ccache
+          echo "::endgroup::"
+          echo "::group::Disk Space"
+          df -hlT /
+          echo "::endgroup::"
+          echo "::group::Out Tree"
+          tree -C -L 5
+          echo "::endgroup::"
+
+      - name: Upload firmware directory
+        uses: actions/upload-artifact@main
+        if: ${{ always() }}
+        with:
+          name: Buildroot_${{github.run_id}}
+          path: ${{env.WorkSpace}}/rockdev/*
+
       - name: Upload Release
         uses: softprops/action-gh-release@master
         if: ${{ always() }}
         with:
           prerelease: true
           files: |
-            ${{env.WorkSpace}}/rockdev/*
+            ${{env.WorkSpace}}/rockdev/*.img
+            ${{env.WorkSpace}}/rockdev/*.txt
+            ${{env.WorkSpace}}/rockdev/*.bin
             ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/.config
           name: Buildroot_${{github.run_id}}
           body: Buildroot
