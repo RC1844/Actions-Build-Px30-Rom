@@ -92,13 +92,11 @@ jobs:
           echo "::group::Disk Space"
           df -hlT /
           echo "::endgroup::"
-          echo "::group::root Tree"
-          tree -C -L 5
-          echo "::endgroup::"
           echo "::group::Out Tree"
           cd buildroot/output/rockchip_px30_64/
           tree -C -L 2 -I "build/*"
           echo "::endgroup::"
+          tar -jcvf host.tar.bz2 ./host
 
       - name: Upload Firmware directory
         uses: actions/upload-artifact@main
@@ -124,6 +122,9 @@ jobs:
           path: |
             ${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/
             !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/build/
+            !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/target/
+            !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/images/
+            !${{env.WorkSpace}}/buildroot/output/rockchip_px30_64/host/
 
       - name: Upload Release
         uses: softprops/action-gh-release@master
