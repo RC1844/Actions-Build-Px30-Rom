@@ -92,15 +92,13 @@ jobs:
           echo "::group::Disk Space"
           df -hlT /
           echo "::endgroup::"
-          echo "::group::Out Tree"
+          echo "::group::root Tree"
           tree -C -L 5
           echo "::endgroup::"
-
-      - name: Start SSH via tmate
-        uses: P3TERX/ssh2actions@main
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          echo "::group::Out Tree"
+          cd buildroot/output/rockchip_px30_64/
+          tree -C -L 2 -I "build/*"
+          echo "::endgroup::"
 
       - name: Upload Firmware directory
         uses: actions/upload-artifact@main
